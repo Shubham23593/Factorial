@@ -1,21 +1,22 @@
 export const METADATA = {
   author: "Shubham Dalvi",
-  title: "Shubham | Portfolio ",
+  title: "Shubham Dalvi | Portfolio",
   description:
     "Shubham Dalvi is a passionate Frontend Engineer, dedicated to crafting aesthetic and modern apps that captivate and engage users.",
-  siteUrl: "https://www.shubhamdalvi.me/",
+  siteUrl: "https://shubham-portfolio-nine-eta.vercel.app/",  // ✅ UPDATED
   twitterHandle: "@shubhamdalvi775",
   keywords: [
     "Shubham Dalvi",
-    "Full stack Engineer",
-    "Mern stack Engineer",
+    "Frontend Engineer",
+    "Full Stack Engineer",
+    "MERN Stack Engineer",
     "Software Engineer",
+    "Web Developer",
     "Portfolio",
   ].join(", "),
-  image:
-    "https://res.cloudinary.com/dywdhyojt/image/upload/v1721378510/social-preview.png",
+  image: "https://shubham-portfolio-nine-eta.vercel.app/images/hero-image.png",  // ✅ UPDATED
   language: "English",
-  themeColor: "#0ea5e9",
+  themeColor: "#0ea5e9",  // ✅ KEPT Sky Blue (No Change)
 };
 
 export const MENULINKS = [
@@ -45,21 +46,26 @@ export const TYPED_STRINGS = [
   "Full Stack Developer",
   "Turning ideas into websites",
   "Building scalable solutions",
+  "Crafting modern apps",
+  "Creating engaging interfaces",
 ];
 
 export const SOCIAL_LINKS = [
-  
   {
     name: "linkedin",
     url: "https://www.linkedin.com/in/shubham-dalvi-7586b0342/",
   },
   {
     name: "github",
-    url: "https://github.com/shubham23593",
+    url: "https://github.com/Shubham23593",
   },
   {
     name: "instagram",
     url: "https://www.instagram.com/shubham__7883/",
+  },
+  {
+    name: "email",
+    url: "mailto:shubhamdalvi775@gmail.com",
   },
 ];
 
@@ -81,13 +87,13 @@ export const SKILLS = {
       name: "c",
       image: "/skills/c.png",
     },
-   
   ],
   librariesAndFrameworks: [
     {
       name: "react",
       image: "/skills/react.png",
     },
+    
     {
       name: "node.js",
       image: "/skills/nodejs.png",
@@ -168,7 +174,7 @@ export const PROJECTS = [
     description:
       "Secure online banking platform with user authentication, transaction processing, digital passbook, and account management 🏦",
     gradient: ["#38bdf8", "#0ea5e9"],
-    url: "",
+    url: "https://github.com/Shubham23593",
     tech: ["react", "firebase", "redux", "tailwindcss"],
   },
   {
@@ -182,7 +188,6 @@ export const PROJECTS = [
     tech: ["java", "mysql"],
   },
 ];
-
 
 export const WORK_CONTENTS = {
   AECCI: [
