@@ -7,6 +7,8 @@ const Collaboration = ({ clientHeight }) => {
   const quoteRef = useRef(null);
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
     const smallScreen = document.body.clientWidth < 767;
 
     const timeline = gsap.timeline({
@@ -64,7 +66,7 @@ const Collaboration = ({ clientHeight }) => {
         <p className="opacity-40 text-6xl sm:text-7xl font-semibold whitespace-nowrap ui-left transform-gpu">
           {Array(5)
             .fill(
-              " Software Engineering Problem Solving Software Architecture "
+              " Full Stack Development | Backend | Frontend | APIs | Databases "
             )
             .reduce((str, el) => str.concat(el), "")}{" "}
         </p>
@@ -78,7 +80,7 @@ const Collaboration = ({ clientHeight }) => {
             className="text-strong font-semibold"
             style={{
               background:
-                "linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #8b31ff 51%, #7000ff 102%)",
+                "linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #0ea5e9 51%, #38bdf8 102%)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -92,7 +94,7 @@ const Collaboration = ({ clientHeight }) => {
         <p className="mt-6 md:mt-8 opacity-40 text-6xl sm:text-7xl font-semibold whitespace-nowrap ui-right transform-gpu">
           {Array(5)
             .fill(
-              " Agile Development Frontend Development React Native Development "
+              " React | Node.js | Express.js | TailwindCSS | PostgreSQL | MongoDB "
             )
             .reduce((str, el) => str.concat(el), "")}{" "}
         </p>

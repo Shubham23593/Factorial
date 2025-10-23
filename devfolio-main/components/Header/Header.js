@@ -33,10 +33,10 @@ const Header = ({ children }) => {
       <div className="flex justify-between section-container">
         <a href="#home" className="link">
           <Image
-            src="/logo.svg"
-            alt="Logo - Shubh Porwal"
-            width={25}
-            height={25}
+            src="/sd.png"
+            alt="Logo - Shubham Dalvi"
+            width={40}
+            height={40}
           />
         </a>
         <div className="outer-menu relative flex items-center gap-8 z-[1]">
@@ -60,3 +60,5 @@ const Header = ({ children }) => {
 };
 
 export default Header;
+
+

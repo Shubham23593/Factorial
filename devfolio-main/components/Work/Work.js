@@ -11,22 +11,12 @@ const Work = ({ isDesktop }) => {
   const tabItems = useMemo(
     () => [
       {
-        title: "Grapevine",
-        value: "grapevine",
+        title: "AECCI",
+        value: "aecci",
         content: (
           <StickyScroll
             isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.GRAPEVINE}
-          />
-        ),
-      },
-      {
-        title: "Dukaan",
-        value: "dukaan",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.DUKAAN}
+            contentItems={WORK_CONTENTS.AECCI}
           />
         ),
       },
@@ -81,8 +71,9 @@ const Work = ({ isDesktop }) => {
               Experience
             </h1>
             <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-              A quick recap of where I&apos;ve worked.{" "}
-            </h2>
+  Here’s a look at my ongoing internship and the work I’ve been doing.
+</h2>
+
           </div>
           <Tabs tabItems={tabItems} />
         </div>

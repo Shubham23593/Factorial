@@ -5,11 +5,14 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { MENULINKS, SKILLS } from "../../constants";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const Skills = () => {
   const sectionRef = useRef(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      // --- Scroll Animation ---
       const tl = gsap
         .timeline({ defaults: { ease: "none" } })
         .from(
@@ -24,6 +27,28 @@ const Skills = () => {
         end: "center center",
         scrub: 0,
         animation: tl,
+      });
+
+      // --- Hover Animation for skill icons ---
+      const icons = sectionRef.current.querySelectorAll(".skill-icon");
+
+      icons.forEach((icon) => {
+        icon.addEventListener("mouseenter", () => {
+          gsap.to(icon, {
+            y: -8,
+            scale: 1.15,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+        icon.addEventListener("mouseleave", () => {
+          gsap.to(icon, {
+            y: 0,
+            scale: 1,
+            duration: 0.3,
+            ease: "power2.inOut",
+          });
+        });
       });
     });
 
@@ -54,42 +79,64 @@ const Skills = () => {
               My Skills
             </h1>
             <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-              I like to take responsibility to craft aesthetic user experience
-              using modern frontend architecture.{" "}
+              I build full stack websites that combine smooth user experiences
+              with reliable backend performance.
             </h2>
           </div>
+
+          {/* LANGUAGES AND TOOLS */}
           <div className="mt-10">
             <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4 staggered-reveal">
               LANGUAGES AND TOOLS
             </h3>
             <div className="flex items-center flex-wrap gap-6 staggered-reveal">
               {SKILLS.languagesAndTools.map((skill) => (
-                <Image
-                  key={skill}
-                  src={`/skills/${skill}.svg`}
-                  alt={skill}
-                  width={50}
-                  height={50}
-                />
+                <div
+                  key={skill.name}
+                  className="flex flex-col items-center gap-2 group cursor-pointer"
+                >
+                  <Image
+                    src={skill.image}
+                    alt={skill.name}
+                    width={50}
+                    height={50}
+                    className="skill-icon"
+                  />
+                  <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {skill.name}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
+
+          {/* LIBRARIES AND FRAMEWORKS */}
           <div className="mt-10">
             <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4 staggered-reveal">
               LIBRARIES AND FRAMEWORKS
             </h3>
             <div className="flex flex-wrap gap-6 transform-gpu staggered-reveal">
               {SKILLS.librariesAndFrameworks.map((skill) => (
-                <Image
-                  key={skill}
-                  src={`/skills/${skill}.svg`}
-                  alt={skill}
-                  width={50}
-                  height={50}
-                />
+                <div
+                  key={skill.name}
+                  className="flex flex-col items-center gap-2 group cursor-pointer"
+                >
+                  <Image
+                    src={skill.image}
+                    alt={skill.name}
+                    width={50}
+                    height={50}
+                    className="skill-icon"
+                  />
+                  <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {skill.name}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
+
+          {/* DATABASES AND OTHERS */}
           <div className="flex flex-wrap mt-10">
             <div className="mr-16 xs:mr-20 mb-6 staggered-reveal">
               <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4">
@@ -97,29 +144,46 @@ const Skills = () => {
               </h3>
               <div className="flex flex-wrap gap-6 transform-gpu">
                 {SKILLS.databases.map((skill) => (
-                  <Image
-                    key={skill}
-                    src={`/skills/${skill}.svg`}
-                    alt={skill}
-                    width={50}
-                    height={50}
-                  />
+                  <div
+                    key={skill.name}
+                    className="flex flex-col items-center gap-2 group cursor-pointer"
+                  >
+                    <Image
+                      src={skill.image}
+                      alt={skill.name}
+                      width={50}
+                      height={50}
+                      className="skill-icon"
+                    />
+                    <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {skill.name}
+                    </span>
+                  </div>
                 ))}
               </div>
             </div>
+
             <div className="staggered-reveal">
               <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4">
-                Other
+                OTHERS
               </h3>
               <div className="flex flex-wrap gap-6 transform-gpu">
                 {SKILLS.other.map((skill) => (
-                  <Image
-                    key={skill}
-                    src={`/skills/${skill}.svg`}
-                    alt={skill}
-                    width={50}
-                    height={50}
-                  />
+                  <div
+                    key={skill.name}
+                    className="flex flex-col items-center gap-2 group cursor-pointer"
+                  >
+                    <Image
+                      src={skill.image}
+                      alt={skill.name}
+                      width={50}
+                      height={50}
+                      className="skill-icon"
+                    />
+                    <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {skill.name}
+                    </span>
+                  </div>
                 ))}
               </div>
             </div>

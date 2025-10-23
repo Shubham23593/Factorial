@@ -12,12 +12,12 @@ module.exports = {
       current: "currentColor",
       white: "#ffffff",
       black: "#000000",
-      purple: "#8b31ff",
-      red: "#cf0000",
-      green: "#00ac56",
+      purple: "#0ea5e9",
+      red: "#06b6d4",
+      green: "#00d9ff",
       indigo: {
-        light: "#9f55ff",
-        dark: "#7000ff",
+        light: "#38bdf8",
+        dark: "#0284c7",
       },
       gray: {
         light: {

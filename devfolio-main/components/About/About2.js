@@ -41,20 +41,20 @@ const About2 = ({ clientHeight }) => {
           ref={quoteRef}
           className="font-medium text-[2.70rem] md:text-6xl lg:text-[4rem] text-center"
         >
-          I have a{" "}
+          I write clean,{" "}
           <span
             className="about-3 font-bold"
             style={{
               background:
-                "linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #8b31ff 51%, #7000ff 102%)",
+                "linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #0ea5e9 51%, #38bdf8 102%)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
           >
-            strong
+            efficient code
           </span>{" "}
-          obsession for attention to detail.
+          with an eye for detail.
         </h1>
       </div>
     </section>

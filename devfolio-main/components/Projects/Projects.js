@@ -98,10 +98,23 @@ const Projects = ({ isDesktop, clientHeight }) => {
           <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
             My Projects
           </h1>
-          <h2 className="text-[1.65rem] font-medium md:max-w-lg max-w-sm mt-2 staggered-reveal">
-            Some things I&apos;ve built with love, expertise and a pinch of
-            magical ingredients.{" "}
-          </h2>
+         <h2 className="text-[1.65rem] font-medium md:max-w-lg max-w-sm mt-2 staggered-reveal">
+  Here are some projects I’ve{" "}
+  <span
+    className="font-bold"
+    style={{
+      background:
+        "linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #0ea5e9 51%, #38bdf8 102%)",
+      backgroundSize: "200% 100%",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+    }}
+  >
+    crafted with care, skill, and a touch of creativity
+  </span>
+  .
+</h2>
+
         </div>
         <div
           className={`${

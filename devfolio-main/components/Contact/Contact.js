@@ -43,9 +43,9 @@ const Contact = () => {
   const buttonElementRef = useRef(null);
   const sectionRef = useRef(null);
 
+  // ✅ FIXED: Removed setIsSending from handleChange
   const handleChange = ({ target }) => {
     const { id, value } = target;
-    value.length === 0 ? setIsSending(false) : setIsSending(true);
     setFormData((prevVal) => {
       if (
         value.trim() !== prevVal[id] &&
@@ -82,12 +82,15 @@ const Contact = () => {
         if (res.status === 200) {
           setMailerResponse("success");
           emptyForm();
+          setIsSending(false);
         } else {
           setMailerResponse("error");
+          setIsSending(false);
         }
       })
       .catch((err) => {
         setMailerResponse("error");
+        setIsSending(false);
         console.error(err);
       });
   };
@@ -99,7 +102,9 @@ const Contact = () => {
   }, [mailerResponse]);
 
   useEffect(() => {
-    buttonElementRef.current.addEventListener("click", (e) => {
+    if (!buttonElementRef.current) return;
+
+    const handleButtonClick = (e) => {
       if (!buttonElementRef.current.classList.contains("active")) {
         buttonElementRef.current.classList.add("active");
 
@@ -225,10 +230,18 @@ const Contact = () => {
           ],
         });
       }
-    });
-  }, [buttonElementRef]);
+    };
+
+    buttonElementRef.current.addEventListener("click", handleButtonClick);
+
+    return () => {
+      buttonElementRef.current?.removeEventListener("click", handleButtonClick);
+    };
+  }, []);
 
   useEffect(() => {
+    if (!sectionRef.current) return;
+
     const tl = gsap.timeline({ defaults: { ease: "none" } });
 
     tl.from(
@@ -246,7 +259,7 @@ const Contact = () => {
     });
 
     return () => tl.kill();
-  }, [sectionRef]);
+  }, []);
 
   return (
     <section
@@ -293,7 +306,7 @@ const Contact = () => {
 
             <div className="relative mt-14">
               <input
-                type="text"
+                type="email"
                 id="email"
                 className="block w-full h-12 sm:h-14 px-4 text-xl sm:text-2xl font-mono outline-none border-2 border-purple bg-transparent rounded-[0.6rem] transition-all duration-200"
                 value={formData.email}
@@ -339,13 +352,14 @@ const Contact = () => {
             disabled={
               formData.name === "" ||
               formData.email === "" ||
-              formData.message === ""
+              formData.message === "" ||
+              isSending
                 ? true
                 : false
             }
             onClick={handleSubmit}
           >
-            <span>Send -&gt;</span>
+            <span>{isSending ? "Sending..." : "Send ->"}</span>
             <span className={styles.success}>
               <svg viewBox="0 0 16 16">
                 <polyline points="3.75 9 7 12 13 5"></polyline>

@@ -95,14 +95,50 @@ const StickyScroll = ({ contentItems }) => {
             <div className="h-40" />
           </div>
         </div>
+
+        {/* Right side - Logo Display */}
         <motion.div
+          className="hidden lg:block h-80 w-80 rounded-md bg-gray-dark-2 sticky top-10 overflow-hidden flex-shrink-0"
           animate={{
-            backgroundImage:
-              linearGradients[activeCard % linearGradients.length],
+            backgroundColor:
+              backgroundColors[activeCard % backgroundColors.length],
           }}
-          className="hidden lg:block h-60 w-80 rounded-xl bg-white sticky top-10 overflow-hidden"
         >
-          {contentItems[activeCard].content ?? null}
+          <motion.div
+            animate={{
+              y: activeCard * -400,
+            }}
+            transition={{
+              duration: 0.2,
+              ease: "easeOut",
+            }}
+            className="w-full"
+          >
+            {contentItems.map((item, index) => (
+              <div
+                key={"content-" + index}
+                className="h-80 w-80 rounded-md flex items-center justify-center bg-gradient-to-br from-gray-dark-2 to-gray-dark-3"
+              >
+                {item.logo ? (
+                  <div className="flex items-center justify-center h-full w-full p-6">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.logo}
+                      alt={item.title}
+                      className="h-64 w-64 object-contain"
+                    />
+                  </div>
+                ) : (
+                  <motion.div
+                    style={{
+                      background: linearGradients[index % linearGradients.length],
+                    }}
+                    className="h-full w-full rounded-md"
+                  />
+                )}
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
