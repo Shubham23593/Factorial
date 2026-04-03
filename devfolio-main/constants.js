@@ -194,7 +194,7 @@ export const WORK_CONTENTS = {
     {
       title: "Asian Exporters Chamber of Commerce and Industry",
       description:
-        "Frontend Developer Internship at AECCI. Contributing to the development of responsive web interfaces and interactive components using modern frontend technologies.",
+        "Completed a Frontend Developer Internship at AECCI. Contributed to the development of responsive web interfaces and interactive components using modern frontend technologies.",
       logo: "/logos/aecci-logo.png",
       content: (
         <div className="h-full w-full flex items-center justify-center text-white px-4">
@@ -220,7 +220,7 @@ export const WORK_CONTENTS = {
       logo: "/logos/2nd.webp",
       content: (
         <div className="h-full w-full flex items-center justify-center text-white px-4">
-          Sep 2025 - Present · Navi Mumbai, India
+          Sep 2025 - Dec 2025 · Navi Mumbai, India
         </div>
       ),
     },

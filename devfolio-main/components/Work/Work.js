@@ -71,7 +71,7 @@ const Work = ({ isDesktop }) => {
               Experience
             </h1>
             <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-  Here’s a look at my ongoing internship and the work I’ve been doing.
+  Here’s a look at my completed internship and the work I’ve done.
 </h2>
 
           </div>
