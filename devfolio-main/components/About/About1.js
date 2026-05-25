@@ -68,7 +68,7 @@ const About1 = ({ clientHeight }) => {
           className="font-medium text-[2.70rem] md:text-6xl lg:text-[4rem] text-center"
         >
           <span className="about-1 leading-tight">
-            I&apos;m a Third-year{" "}
+            I&apos;m a Final-year{" "}
             <span style={gradientStyle} className="gradient-inline">
               Computer Engineering
             </span>{" "}

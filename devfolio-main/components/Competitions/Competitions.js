@@ -3,40 +3,40 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Tabs from "./Tabs/Tabs";
 import StickyScroll from "./StickyScroll/StickyScroll";
-import { MENULINKS, WORK_CONTENTS } from "../../constants";
+import { MENULINKS, HACKATHON_CONTENTS } from "../../constants";
 
-const Work = ({ isDesktop }) => {
+const Competitions = ({ isDesktop }) => {
   const sectionRef = useRef(null);
 
   const tabItems = useMemo(
     () => [
       {
-        title: "Sapphire",
-        value: "sapphire",
+        title: "Hackverse 2.0",
+        value: "hackverse",
         content: (
           <StickyScroll
             isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.SAPPHIRE}
+            contentItems={HACKATHON_CONTENTS.HACKVERSE}
           />
         ),
       },
       {
-        title: "Ideamagix",
-        value: "ideamagix",
+        title: "Build-it On",
+        value: "buildit",
         content: (
           <StickyScroll
             isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.IDEAMAGIX}
+            contentItems={HACKATHON_CONTENTS.BUILD_IT}
           />
         ),
       },
       {
-        title: "AECCI",
-        value: "aecci",
+        title: "IIT Patna",
+        value: "iitpatna",
         content: (
           <StickyScroll
             isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.AECCI}
+            contentItems={HACKATHON_CONTENTS.IIT_PATNA}
           />
         ),
       },
@@ -69,7 +69,7 @@ const Work = ({ isDesktop }) => {
   return (
     <section
       ref={sectionRef}
-      id={MENULINKS[3].ref}
+      id={MENULINKS[4].ref}
       className="w-full relative select-none xs:mt-40 sm:mt-72 mb-96"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -85,14 +85,14 @@ const Work = ({ isDesktop }) => {
         <div className="flex flex-col work-wrapper">
           <div className="flex flex-col">
             <p className="uppercase tracking-widest text-gray-light-1 staggered-reveal">
-              WORK
+              PARTICIPATION
             </p>
             <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
-              Experience
+              Hackathons & Competitions
             </h1>
             <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-  Here’s a look at my completed internship and the work I’ve done.
-</h2>
+              A look at my competitive programming and hackathon journey.
+            </h2>
 
           </div>
           <Tabs tabItems={tabItems} />
@@ -102,4 +102,4 @@ const Work = ({ isDesktop }) => {
   );
 };
 
-export default Work;
+export default Competitions;

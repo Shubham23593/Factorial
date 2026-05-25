@@ -12,6 +12,8 @@ import Skills from "@/components/Skills/Skills";
 import About2 from "@/components/About/About2";
 import Projects from "@/components/Projects/Projects";
 import Work from "@/components/Work/Work";
+import Competitions from "@/components/Competitions/Competitions";
+import Achievements from "@/components/Achievements/Achievements";
 import Collaboration from "@/components/Collaboration/Collaboration";
 import Contact from "@/components/Contact/Contact";
 import Footer from "@/components/Footer/Footer";
@@ -72,6 +74,8 @@ export default function Home() {
             <About2 clientHeight={clientHeight} />
             <Projects isDesktop={isDesktop} clientHeight={clientHeight} />
             <Work isDesktop={isDesktop} />
+            <Competitions isDesktop={isDesktop} />
+            <Achievements isDesktop={isDesktop} />
             <Collaboration clientHeight={clientHeight} />
             <Contact />
           </main>

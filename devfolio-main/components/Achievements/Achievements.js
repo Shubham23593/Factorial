@@ -1,42 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Tabs from "./Tabs/Tabs";
-import StickyScroll from "./StickyScroll/StickyScroll";
-import { MENULINKS, WORK_CONTENTS } from "../../constants";
+import Tabs from "../Competitions/Tabs/Tabs";
+import StickyScroll from "../Competitions/StickyScroll/StickyScroll";
+import { MENULINKS, WINNING_CONTENTS } from "../../constants";
 
-const Work = ({ isDesktop }) => {
+const Achievements = ({ isDesktop }) => {
   const sectionRef = useRef(null);
 
   const tabItems = useMemo(
     () => [
       {
-        title: "Sapphire",
-        value: "sapphire",
+        title: "Frontend Odyssey",
+        value: "frontend-odyssey",
         content: (
           <StickyScroll
             isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.SAPPHIRE}
-          />
-        ),
-      },
-      {
-        title: "Ideamagix",
-        value: "ideamagix",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.IDEAMAGIX}
-          />
-        ),
-      },
-      {
-        title: "AECCI",
-        value: "aecci",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.AECCI}
+            contentItems={WINNING_CONTENTS.WINNER}
           />
         ),
       },
@@ -69,7 +49,7 @@ const Work = ({ isDesktop }) => {
   return (
     <section
       ref={sectionRef}
-      id={MENULINKS[3].ref}
+      id={MENULINKS[5].ref}
       className="w-full relative select-none xs:mt-40 sm:mt-72 mb-96"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -85,14 +65,14 @@ const Work = ({ isDesktop }) => {
         <div className="flex flex-col work-wrapper">
           <div className="flex flex-col">
             <p className="uppercase tracking-widest text-gray-light-1 staggered-reveal">
-              WORK
+              AWARDS
             </p>
             <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
-              Experience
+              Winning & Achievements
             </h1>
             <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-  Here’s a look at my completed internship and the work I’ve done.
-</h2>
+              Showcasing my awards, honors, and winning projects.
+            </h2>
 
           </div>
           <Tabs tabItems={tabItems} />
@@ -102,4 +82,4 @@ const Work = ({ isDesktop }) => {
   );
 };
 
-export default Work;
+export default Achievements;
