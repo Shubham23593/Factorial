@@ -210,6 +210,46 @@ export const PROJECTS = [
     url: "https://wondrous-clafoutis-4235be.netlify.app/",
     tech: ["java", "mysql"],
   },
+  {
+    name: "ToggleNest",
+    image: "/projects/toggle.png",
+    blurImage: "/projects/toggle.png",
+    description:
+      "Kanban-style collaborative project management platform with drag-and-drop task boards, role-based access, and real-time progress tracking 📋",
+    gradient: ["#0ea5e9", "#06b6d4"],
+    url: "https://togglenestproject.netlify.app/",
+    tech: ["react", "nodejs", "express", "mongodb"],
+  },
+  {
+    name: "Deepali Makeup Studio",
+    image: "/projects/deepali.png",
+    blurImage: "/projects/deepali.png",
+    description:
+      "Production-level makeup artist website with order management, service booking, portfolio showcase, and client communication 💄",
+    gradient: ["#06b6d4", "#00d9ff"],
+    url: "https://deepalimakeup.vercel.app/",
+    tech: ["react", "nodejs", "tailwindcss", "firebase"],
+  },
+  {
+    name: "Life of Developer",
+    image: "/projects/lifeofdev.png",
+    blurImage: "/projects/lifeofdev.png",
+    description:
+      "Immersive storytelling website narrating the journey of a developer's life with interactive visuals and scroll-based animations 🧑‍💻",
+    gradient: ["#38bdf8", "#0ea5e9"],
+    url: "https://life-of-developers.vercel.app/",
+    tech: ["react", "gsap", "tailwindcss"],
+  },
+  {
+    name: "Telemedicine Queue System",
+    image: "/projects/hackproject.jpeg",
+    blurImage: "/projects/hackproject.jpeg",
+    description:
+      "AI-powered patient queue optimizer using priority scheduling, ML duration prediction, and Socket.io real-time updates for telemedicine 🏥",
+    gradient: ["#0284c7", "#38bdf8"],
+    url: "https://github.com/Shubham23593",
+    tech: ["react", "nodejs", "express", "socket.io"],
+  },
 ];
 
 export const WORK_CONTENTS = {

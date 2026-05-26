@@ -35,7 +35,7 @@ const Tab = ({ index, tab, activeTab, handleOnClick, setIsHovering }) => {
 
 const TabsContent = ({ tabs, isHovering }) => {
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-[36rem] md:h-[34rem]">
       {tabs.map((tab, index) => {
         return (
           <motion.div
