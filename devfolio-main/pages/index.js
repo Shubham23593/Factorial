@@ -75,7 +75,7 @@ export default function Home() {
             <Projects isDesktop={isDesktop} clientHeight={clientHeight} />
             <Work isDesktop={isDesktop} />
             <Competitions isDesktop={isDesktop} />
-            <Achievements isDesktop={isDesktop} />
+            {/* <Achievements isDesktop={isDesktop} /> */}
             <Collaboration clientHeight={clientHeight} />
             <Contact />
           </main>

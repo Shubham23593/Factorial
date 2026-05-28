@@ -30,6 +30,7 @@ const Competitions = ({ isDesktop }) => {
           />
         ),
       },
+      /* IIT Patna - commented out
       {
         title: "IIT Patna",
         value: "iitpatna",
@@ -40,6 +41,7 @@ const Competitions = ({ isDesktop }) => {
           />
         ),
       },
+      */
     ],
     [isDesktop]
   );

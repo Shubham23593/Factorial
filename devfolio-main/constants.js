@@ -230,6 +230,7 @@ export const PROJECTS = [
     url: "https://deepalimakeup.vercel.app/",
     tech: ["react", "nodejs", "tailwindcss", "firebase"],
   },
+  /* Life of Developer - commented out
   {
     name: "Life of Developer",
     image: "/projects/lifeofdev.png",
@@ -240,6 +241,7 @@ export const PROJECTS = [
     url: "https://life-of-developers.vercel.app/",
     tech: ["react", "gsap", "tailwindcss"],
   },
+  */
   {
     name: "Telemedicine Queue System",
     image: "/projects/hackproject.jpeg",
