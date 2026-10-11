@@ -25,6 +25,10 @@ export const MENULINKS = [
     ref: "home",
   },
   {
+    name: "Journey",
+    ref: "journey",
+  },
+  {
     name: "Skills",
     ref: "skills",
   },
@@ -33,16 +37,12 @@ export const MENULINKS = [
     ref: "projects",
   },
   {
-    name: "Work",
+    name: "Experience",
     ref: "work",
   },
   {
-    name: "Competitions",
-    ref: "competitions",
-  },
-  {
     name: "Achievements",
-    ref: "achievements",
+    ref: "competitions",
   },
   {
     name: "Contact",

@@ -1,5 +1,4 @@
 import localFont from "next/font/local";
-import { JetBrains_Mono } from "next/font/google";
 
 export const calibre = localFont({
   src: [
@@ -78,7 +77,20 @@ export const calibre = localFont({
   variable: "--font-calibre",
 });
 
-export const jetbrains_mono = JetBrains_Mono({
-  subsets: ["latin"],
+// Use Calibre as fallback for JetBrains Mono since Google Fonts is not accessible
+export const jetbrains_mono = localFont({
+  src: [
+    {
+      path: "./Calibre/Calibre-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./Calibre/Calibre-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  display: "swap",
   variable: "--font-jetbrains-mono",
 });

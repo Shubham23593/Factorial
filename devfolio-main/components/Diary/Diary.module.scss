@@ -1,0 +1,28 @@
+.diaryContainer {
+  position: relative;
+  perspective: 1000px;
+}
+
+.pageTurn {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.handwritten {
+  font-family: 'Caveat', cursive;
+}
+
+.coffeeStain {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 30%,
+    rgba(139, 90, 43, 0.1) 40%,
+    rgba(139, 90, 43, 0.05) 60%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
