@@ -52,7 +52,7 @@ const Achievements = () => {
   const wordX = useTransform(scrollYProgress, [0, 1], ["8%", "-38%"]);
 
   useLayoutEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !sectionRef.current) return undefined;
     const ctx = gsap.context(() => {
       const strokes = sectionRef.current.querySelectorAll(
         ".award-stroke circle, .award-stroke path"

@@ -11,7 +11,7 @@ const Magnetic = ({ children, strength = 0.3, className = "" }) => {
   const sy = useSpring(my, { stiffness: 180, damping: 14, mass: 0.2 });
 
   const onMove = (e) => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     mx.set((e.clientX - rect.left - rect.width / 2) * strength);
     my.set((e.clientY - rect.top - rect.height / 2) * strength);

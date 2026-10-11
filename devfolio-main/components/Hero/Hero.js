@@ -91,7 +91,7 @@ const Hero = ({ start = true }) => {
   };
 
   useLayoutEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !sectionRef.current) return undefined;
     const ctx = gsap.context(() => {
       const strokes = sectionRef.current.querySelectorAll(
         ".bp-stroke path, .bp-stroke line"

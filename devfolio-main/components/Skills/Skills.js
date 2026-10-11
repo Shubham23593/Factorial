@@ -37,7 +37,7 @@ const Skills = () => {
   );
 
   useLayoutEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !sectionRef.current) return undefined;
     const ctx = gsap.context(() => {
       gsap.from("[data-skills-reveal]", {
         y: 32,
@@ -53,8 +53,8 @@ const Skills = () => {
       });
 
       /* decorative circuit line draws itself across the section */
-      const circuit = sectionRef.current.querySelector("[data-circuit]");
-      if (circuit) {
+      const circuit = sectionRef.current?.querySelector("[data-circuit]");
+      if (circuit && typeof circuit.getTotalLength === "function") {
         const len = circuit.getTotalLength();
         gsap.set(circuit, { strokeDasharray: len, strokeDashoffset: len });
         gsap.to(circuit, {
@@ -76,7 +76,7 @@ const Skills = () => {
   const progress = (active / (SKILL_STAGES.length - 1)) * 100;
 
   return (
-    <section id="skills" className="relative bg-paper-2 py-24 md:py-36">
+    <section ref={sectionRef} id="skills" className="relative bg-paper-2 py-24 md:py-36">
       <div className="section-container">
         <ChapterHeading
           index="02"
