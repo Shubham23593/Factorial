@@ -1,42 +1,47 @@
-# devfolio
+# Shubham Dalvi — Portfolio · *The Art of the Build*
 
-<a href="https://shubhporwal.me">
-  <img alt="devfolio" src="./public/preview.png" />
-</a>
+An interactive digital exhibition: warm editorial paper, ink typography and a
+vermilion accent, choreographed with GSAP + ScrollTrigger and Framer Motion.
 
-<p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
-  <a href="#" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
-  </a>
-  <img src="https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99" alt="Star Badge"/>
-</p>
+**Good ideas deserve better execution.**
 
-👨‍🎓 An eye-catching developer Portfolio, Built on NextJS, GSAP, Tailwind and React
+## Chapters
 
-### ✨ [Live Demo](http://www.shubhporwal.me/)
+| №  | Section      | Idea                                              |
+| -- | ------------ | ------------------------------------------------- |
+| 00 | Hero         | Editorial statement + self-drawing "Assembly" blueprint |
+| 01 | About        | Portrait plate + narrative reveals                |
+| 02 | Skills       | Interactive IDEA → DELIVERY pipeline (no % bars)  |
+| 03 | Projects     | Featured build + varied editorial exhibition      |
+| 04 | Work         | Internship chronology drawn down a single rail    |
+| 05 | Competitions | Hackathon mission log (Hackverse, Build-it On, IIT Patna) |
+| 06 | Achievements | Runner-Up · Frontend Odyssey (IIT Patna) + Java certificate |
+| 07 | Collaboration| Marquee invitation                                |
+| 08 | Contact      | EmailJS form with validation & live status        |
 
-## Getting Started
+## Stack
 
-In the project directory, you can run:
+Next.js 14 (pages router) · React 18 · GSAP + ScrollTrigger · Framer Motion ·
+Tailwind + SCSS · Typed.js · Vanilla Tilt · EmailJS · Calibre (local) +
+JetBrains Mono (self-hosted via @fontsource).
 
-#### `yarn install`
+## Run
 
-#### `yarn dev`
+```bash
+npm install
+npm run dev      # development
+npm run build    # production build
+npm run start    # serve production build
+npm run lint
+```
 
-Runs the app in the development mode.\
-Open [`http://localhost:3000`](http://localhost:3000) to view it in the browser.
+## Notes
 
-## Design
+- Respects `prefers-reduced-motion` everywhere; content is readable with JS
+  effects disabled.
+- Custom cursor is an additive accent only — the native cursor is never hidden.
+- Soundtrack is optional, never autoplays.
+- First-load JS ≈ 167 kB (sound streams on demand, menu lazy-loads).
 
-You can always draw inspiration from the design, and no, you don't have to give me credits for that.
-
-## Forking
-
-When people ask me whether they may use the code for their own website, I typically say yes as long as they provide proper attribution.
-
-Every time I learn that someone has duplicated my website without giving me credit, it saddens me. This version of my website took a significant amount of work to construct, and I'm pleased of it! All I ask is that you empathize with my situation and leave the footer unaltered.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=shubh73/devfolio&type=Date)](https://www.star-history.com/#shubh73/devfolio&Date)
+Based on the open-source [devfolio](https://github.com/shubh73/devfolio)
+structure, fully re-art-directed and rebuilt.

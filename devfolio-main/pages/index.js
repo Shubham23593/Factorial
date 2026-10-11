@@ -1,87 +1,71 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
-import Loader from "@/components/Loader/Loader";
 import Header from "@/components/Header/Header";
-import Menu from "@/components/Header/Menu/Menu";
 import ProgressIndicator from "@/components/ProgressIndicator/ProgressIndicator";
-import Cursor from "@/components/Cursor/Cursor";
-import Hero from "@/components/Hero/Hero";
-import About1 from "@/components/About/About1";
-import Skills from "@/components/Skills/Skills";
-import About2 from "@/components/About/About2";
-import Projects from "@/components/Projects/Projects";
-import Work from "@/components/Work/Work";
-import Competitions from "@/components/Competitions/Competitions";
-import Achievements from "@/components/Achievements/Achievements";
-import Collaboration from "@/components/Collaboration/Collaboration";
-import Contact from "@/components/Contact/Contact";
-import Footer from "@/components/Footer/Footer";
+import Preloader from "@/components/Preloader/Preloader";
+import { useLenis } from "utils/useLenis";
 import { displayFancyLogs } from "utils/log";
+
+const Cursor = dynamic(() => import("@/components/Cursor/Cursor"), {
+  ssr: false,
+});
+
+const Hero = dynamic(() => import("@/components/Hero/Hero"));
+const About = dynamic(() => import("@/components/About/About"));
+const Skills = dynamic(() => import("@/components/Skills/Skills"));
+const Projects = dynamic(() => import("@/components/Projects/Projects"));
+const Work = dynamic(() => import("@/components/Work/Work"));
+const Competitions = dynamic(() => import("@/components/Competitions/Competitions"));
+const Achievements = dynamic(() => import("@/components/Achievements/Achievements"));
+const Collaboration = dynamic(() => import("@/components/Collaboration/Collaboration"));
+const Contact = dynamic(() => import("@/components/Contact/Contact"));
+const Footer = dynamic(() => import("@/components/Footer/Footer"));
 
 gsap.registerPlugin(ScrollTrigger);
 gsap.config({ nullTargetWarn: false });
 
+/* THE ART OF THE BUILD — an interactive digital exhibition. */
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(true);
-  const [clientHeight, setClientHeight] = useState(0);
-  const [clientWidth, setClientWidth] = useState(0);
+  const [showPreloader, setShowPreloader] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2600);
+  useLenis();
 
-    displayFancyLogs();
+  /* mount the curtain before first paint so the reveal feels authored */
+  useLayoutEffect(() => {
+    setShowPreloader(true);
   }, []);
 
   useEffect(() => {
-    const { innerWidth, innerHeight, orientation, history } = window;
+    window.history.scrollRestoration = "manual";
+    displayFancyLogs();
+  }, []);
 
-    const result =
-      typeof orientation === "undefined" &&
-      navigator.userAgent.indexOf("IEMobile") === -1;
-    history.scrollRestoration = "manual";
-
-    setIsDesktop(result);
-    setClientHeight(innerHeight);
-    setClientWidth(innerWidth);
-  }, [isDesktop]);
+  const handleDone = useCallback(() => setLoaded(true), []);
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <Header>
-            <Menu />
-          </Header>
-          <ProgressIndicator />
-          <Cursor isDesktop={isDesktop} />
-          <main className="flex flex-col">
-            <div
-              role="img"
-              className="text-gray-light-1 opacity-10 sm:text-9xl xs:text-8xl inline-block -z-10 absolute rotate-90 right-0 md:top-52 xs:top-96"
-            >
-              DALVI
-            </div>
-            <div className="fixed top-0 left-0 h-screen w-screen -z-1" />
-            <Hero />
-            <About1 clientHeight={clientHeight} />
-            <Skills />
-            <About2 clientHeight={clientHeight} />
-            <Projects isDesktop={isDesktop} clientHeight={clientHeight} />
-            <Work isDesktop={isDesktop} />
-            <Competitions isDesktop={isDesktop} />
-            {/* <Achievements isDesktop={isDesktop} /> */}
-            <Collaboration clientHeight={clientHeight} />
-            <Contact />
-          </main>
-          <Footer />
-        </>
-      )}
+      <AnimatePresence>
+        {showPreloader && !loaded && <Preloader onDone={handleDone} />}
+      </AnimatePresence>
+      <Header />
+      <ProgressIndicator />
+      <Cursor />
+      <main className="flex flex-col">
+        <Hero start={loaded || !showPreloader} />
+        <About />
+        <Skills />
+        <Projects />
+        <Work />
+        <Competitions />
+        <Achievements />
+        <Collaboration />
+        <Contact />
+      </main>
+      <Footer />
     </>
   );
 }

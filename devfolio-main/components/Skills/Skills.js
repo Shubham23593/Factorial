@@ -1,194 +1,212 @@
-/* eslint-disable @next/next/no-img-element */
-import { useLayoutEffect, useRef } from "react";
-import Image from "next/image";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { MENULINKS, SKILLS } from "../../constants";
+import ChapterHeading from "../Chapter/ChapterHeading";
+import { SKILLS, SKILL_STAGES } from "../../constants";
+import { useReducedMotion } from "../../utils/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* name → skill entry lookup, normalised to lowercase */
+const skillByName = (() => {
+  const map = {};
+  Object.values(SKILLS)
+    .flat()
+    .forEach((s) => {
+      map[s.name.toLowerCase()] = s;
+    });
+  return map;
+})();
+
+/* Chapter 02 — how ideas become systems.
+   A six-stage pipeline; selecting a stage reveals the real
+   technologies used at that point of the build. */
 const Skills = () => {
   const sectionRef = useRef(null);
+  const [active, setActive] = useState(0);
+  const reduced = useReducedMotion();
+
+  const stage = SKILL_STAGES[active];
+
+  const techItems = useMemo(
+    () =>
+      (stage.tech || [])
+        .map((t) => skillByName[t.toLowerCase()])
+        .filter(Boolean),
+    [stage]
+  );
 
   useLayoutEffect(() => {
+    if (reduced) return undefined;
     const ctx = gsap.context(() => {
-      // --- Scroll Animation ---
-      const tl = gsap
-        .timeline({ defaults: { ease: "none" } })
-        .from(
-          sectionRef.current.querySelectorAll(".staggered-reveal"),
-          { opacity: 0, duration: 0.5, stagger: 0.5 },
-          "<"
-        );
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current.querySelector(".skills-wrapper"),
-        start: "100px bottom",
-        end: "center center",
-        scrub: 0,
-        animation: tl,
+      gsap.from("[data-skills-reveal]", {
+        y: 32,
+        autoAlpha: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          once: true,
+        },
       });
 
-      // --- Hover Animation for skill icons ---
-      const icons = sectionRef.current.querySelectorAll(".skill-icon");
-
-      icons.forEach((icon) => {
-        icon.addEventListener("mouseenter", () => {
-          gsap.to(icon, {
-            y: -8,
-            scale: 1.15,
-            duration: 0.3,
-            ease: "power2.out",
-          });
+      /* decorative circuit line draws itself across the section */
+      const circuit = sectionRef.current.querySelector("[data-circuit]");
+      if (circuit) {
+        const len = circuit.getTotalLength();
+        gsap.set(circuit, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(circuit, {
+          strokeDashoffset: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            end: "bottom 55%",
+            scrub: 0.6,
+          },
         });
-        icon.addEventListener("mouseleave", () => {
-          gsap.to(icon, {
-            y: 0,
-            scale: 1,
-            duration: 0.3,
-            ease: "power2.inOut",
-          });
-        });
-      });
-    });
+      }
+    }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reduced]);
+
+  const progress = (active / (SKILL_STAGES.length - 1)) * 100;
 
   return (
-    <section
-      ref={sectionRef}
-      id={MENULINKS[1].ref}
-      className="w-full relative select-none mt-44"
-    >
-      <div className="section-container py-16 flex flex-col justify-center">
-        <img
-          src="/right-pattern.svg"
-          alt=""
-          className="absolute hidden right-0 bottom-2/4 w-2/12 max-w-xs md:block"
-          loading="lazy"
-          height={700}
-          width={320}
+    <section id="skills" className="relative bg-paper-2 py-24 md:py-36">
+      <div className="section-container">
+        <ChapterHeading
+          index="02"
+          kicker="Capabilities"
+          title="How ideas become"
+          accent="systems."
         />
-        <div className="flex flex-col skills-wrapper">
-          <div className="flex flex-col">
-            <p className="uppercase tracking-widest text-gray-light-1 staggered-reveal">
-              SKILLS
-            </p>
-            <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
-              My Skills
-            </h1>
-            <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-              I build full stack websites that combine smooth user experiences
-              with reliable backend performance.
-            </h2>
-          </div>
 
-          {/* LANGUAGES AND TOOLS */}
-          <div className="mt-10">
-            <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4 staggered-reveal">
-              LANGUAGES AND TOOLS
-            </h3>
-            <div className="flex items-center flex-wrap gap-6 staggered-reveal">
-              {SKILLS.languagesAndTools.map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex flex-col items-center gap-2 group cursor-pointer"
+        {/* ——— pipeline rail ——— */}
+        <div data-skills-reveal className="relative mt-20" role="tablist" aria-label="Build stages">
+          {/* base + accent lines */}
+          <div aria-hidden="true" className="absolute left-0 right-0 top-[9px] h-px bg-ink/20" />
+          <div
+            aria-hidden="true"
+            className="absolute left-0 top-[9px] h-px bg-vermilion transition-all duration-700"
+            style={{ width: `${progress}%`, transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}
+          />
+
+          <div className="no-scrollbar -mx-1 flex gap-6 overflow-x-auto px-1 pb-2 sm:justify-between sm:gap-2 sm:overflow-visible">
+            {SKILL_STAGES.map((s, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={s.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls="skills-panel"
+                  id={`stage-tab-${s.id}`}
+                  onClick={() => setActive(i)}
+                  className="group flex flex-none cursor-pointer flex-col items-start gap-3 sm:items-center"
                 >
-                  <Image
-                    src={skill.image}
-                    alt={skill.name}
-                    width={50}
-                    height={50}
-                    className="skill-icon"
+                  <span
+                    className={`relative z-10 block h-[18px] w-[18px] rotate-45 border transition-all duration-500 ${
+                      isActive
+                        ? "scale-125 border-vermilion bg-vermilion"
+                        : "border-ink/50 bg-paper-2 group-hover:border-vermilion"
+                    }`}
                   />
-                  <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {skill.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* LIBRARIES AND FRAMEWORKS */}
-          <div className="mt-10">
-            <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4 staggered-reveal">
-              LIBRARIES AND FRAMEWORKS
-            </h3>
-            <div className="flex flex-wrap gap-6 transform-gpu staggered-reveal">
-              {SKILLS.librariesAndFrameworks.map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex flex-col items-center gap-2 group cursor-pointer"
-                >
-                  <Image
-                    src={skill.image}
-                    alt={skill.name}
-                    width={50}
-                    height={50}
-                    className="skill-icon"
-                  />
-                  <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {skill.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* DATABASES AND OTHERS */}
-          <div className="flex flex-wrap mt-10">
-            <div className="mr-16 xs:mr-20 mb-6 staggered-reveal">
-              <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4">
-                DATABASES
-              </h3>
-              <div className="flex flex-wrap gap-6 transform-gpu">
-                {SKILLS.databases.map((skill) => (
-                  <div
-                    key={skill.name}
-                    className="flex flex-col items-center gap-2 group cursor-pointer"
+                  <span
+                    className={`mono-label transition-colors duration-300 ${
+                      isActive ? "text-ink" : "text-muted group-hover:text-ink"
+                    }`}
                   >
-                    <Image
-                      src={skill.image}
-                      alt={skill.name}
-                      width={50}
-                      height={50}
-                      className="skill-icon"
-                    />
-                    <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {skill.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="staggered-reveal">
-              <h3 className="uppercase tracking-widest text-gray-light-2 font-medium text-base mb-4">
-                OTHERS
-              </h3>
-              <div className="flex flex-wrap gap-6 transform-gpu">
-                {SKILLS.other.map((skill) => (
-                  <div
-                    key={skill.name}
-                    className="flex flex-col items-center gap-2 group cursor-pointer"
-                  >
-                    <Image
-                      src={skill.image}
-                      alt={skill.name}
-                      width={50}
-                      height={50}
-                      className="skill-icon"
-                    />
-                    <span className="text-xs text-gray-light-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {skill.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+                    <span className="mr-1 text-vermilion">0{i + 1}</span>
+                    {s.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
+
+        {/* decorative circuit path */}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 1200 120"
+          className="mt-6 hidden w-full text-ink/25 md:block"
+          fill="none"
+        >
+          <path
+            data-circuit
+            d="M0 60 H180 l30 -30 H420 l30 30 H640 l30 -30 H880 l30 30 H1200"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+        </svg>
+
+        {/* ——— stage detail panel ——— */}
+        <div
+          id="skills-panel"
+          role="tabpanel"
+          aria-labelledby={`stage-tab-${stage.id}`}
+          className="mt-10 border border-ink/15 bg-paper p-8 md:mt-6 md:p-12"
+        >
+          <div
+              key={stage.id}
+              className="panel-swap grid grid-cols-1 gap-10 lg:grid-cols-12"
+            >
+              <div className="lg:col-span-5">
+                <p className="mono-label text-vermilion">
+                  STAGE 0{active + 1} / 06
+                </p>
+                <h3 className="display mt-4 text-4xl md:text-5xl">
+                  {stage.label}
+                </h3>
+                <p className="mt-5 max-w-md text-base leading-relaxed text-ink/75 md:text-lg">
+                  {stage.blurb}
+                </p>
+              </div>
+
+              <div className="lg:col-span-7">
+                {stage.practices?.length > 0 && (
+                  <ul className="flex flex-wrap gap-3">
+                    {stage.practices.map((p) => (
+                      <li
+                        key={p}
+                        className="mono-label border border-ink/25 px-4 py-2 text-ink/70"
+                      >
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {techItems.length > 0 && (
+                  <ul className="flex flex-wrap gap-x-8 gap-y-6">
+                    {techItems.map((t) => (
+                      <li key={t.name} className="group flex items-center gap-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={t.image}
+                          alt=""
+                          width={36}
+                          height={36}
+                          loading="lazy"
+                          className="h-9 w-9 object-contain transition-transform duration-300 group-hover:-translate-y-1"
+                        />
+                        <span className="mono-label text-ink/70">{t.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+        </div>
+
+        <p data-skills-reveal className="mono-label mt-8 text-muted">
+          SELECT A STAGE TO INSPECT THE TOOLKIT — NO PERCENTAGE BARS WERE HARMED
+          IN THE MAKING OF THIS SECTION.
+        </p>
       </div>
     </section>
   );

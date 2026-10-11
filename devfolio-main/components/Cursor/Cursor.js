@@ -1,79 +1,74 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { useFinePointer, useReducedMotion } from "../../utils/hooks";
 
-const Cursor = ({ isDesktop }) => {
-  const cursor = useRef(null);
-  const follower = useRef(null);
+/* Restrained cursor accent: a vermilion dot with a trailing ring.
+   The native cursor is NEVER hidden — this only adds a layer of depth
+   on fine-pointer devices and respects reduced motion. */
+const Cursor = () => {
+  const finePointer = useFinePointer();
+  const reduced = useReducedMotion();
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
-    if (isDesktop && document.body.clientWidth > 767) {
-      follower.current.classList.remove("hidden");
-      cursor.current.classList.remove("hidden");
+    if (!finePointer || reduced) return;
 
-      const moveCircle = (e) => {
-        gsap.to(cursor.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.1,
-          ease: "none",
-        });
-        gsap.to(follower.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.3,
-          ease: "none",
-        });
-      };
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
-      const hover = () => {
-        gsap.to(cursor.current, {
-          scale: 0.5,
-          duration: 0.3,
-        });
-        gsap.to(follower.current, {
-          scale: 3,
-          duration: 0.3,
-        });
-      };
+    dot.classList.remove("hidden");
+    ring.classList.remove("hidden");
+    gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
 
-      const unHover = () => {
-        gsap.to(cursor.current, {
-          scale: 1,
-          duration: 0.3,
-        });
-        gsap.to(follower.current, {
-          scale: 1,
-          duration: 0.3,
-        });
-      };
+    const dotX = gsap.quickTo(dot, "x", { duration: 0.12, ease: "power2.out" });
+    const dotY = gsap.quickTo(dot, "y", { duration: 0.12, ease: "power2.out" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.45, ease: "power3.out" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.45, ease: "power3.out" });
 
-      document.addEventListener("mousemove", moveCircle);
+    const move = (e) => {
+      dotX(e.clientX);
+      dotY(e.clientY);
+      ringX(e.clientX);
+      ringY(e.clientY);
+    };
 
-      document.querySelectorAll(".link").forEach((el) => {
-        el.addEventListener("mouseenter", hover);
-        el.addEventListener("mouseleave", unHover);
+    const grow = () => gsap.to(ring, { scale: 1.8, duration: 0.3 });
+    const shrink = () => gsap.to(ring, { scale: 1, duration: 0.3 });
+
+    const hoverables = () =>
+      document.querySelectorAll("a, button, [role='button'], input, textarea");
+
+    const nodes = hoverables();
+    nodes.forEach((el) => {
+      el.addEventListener("mouseenter", grow);
+      el.addEventListener("mouseleave", shrink);
+    });
+    document.addEventListener("mousemove", move, { passive: true });
+
+    return () => {
+      document.removeEventListener("mousemove", move);
+      nodes.forEach((el) => {
+        el.removeEventListener("mouseenter", grow);
+        el.removeEventListener("mouseleave", shrink);
       });
+    };
+  }, [finePointer, reduced]);
 
-      return () => {
-        document.removeEventListener("mousemove", moveCircle);
-
-        document.querySelectorAll(".link").forEach((el) => {
-          el.removeEventListener("mouseenter", hover);
-          el.removeEventListener("mouseleave", unHover);
-        });
-      };
-    }
-  }, [cursor, follower, isDesktop]);
+  if (!finePointer || reduced) return null;
 
   return (
     <>
       <div
-        ref={cursor}
-        className="bg-white rounded-full mix-blend-difference fixed w-4 h-4 select-none pointer-events-none z-50 hidden"
+        ref={dotRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[90] hidden h-1.5 w-1.5 rounded-full bg-vermilion"
       />
       <div
-        ref={follower}
-        className="bg-white/[0.02] border border-white/[0.2] rounded-full fixed -top-3 -left-3 w-10 h-10 select-none pointer-events-none z-50 hidden"
+        ref={ringRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[90] hidden h-8 w-8 rounded-full border border-vermilion/50"
       />
     </>
   );

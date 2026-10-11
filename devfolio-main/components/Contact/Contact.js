@@ -1,415 +1,229 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import Filter from "bad-words";
 import toast, { Toaster } from "react-hot-toast";
-import Fade from "react-reveal/Fade";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import mail from "./mailer";
-import styles from "./Contact.module.scss";
-import { MENULINKS } from "../../constants";
+import Profiles from "../Profiles/Profiles";
+import { useReducedMotion } from "../../utils/hooks";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const filter = new Filter();
 filter.removeWords("hell", "god", "shit");
 
 const toastOptions = {
   style: {
-    borderRadius: "10px",
-    background: "#333",
-    color: "#fff",
-    fontFamily: "sans-serif",
+    borderRadius: 0,
+    background: "#171717",
+    color: "#F4F0E8",
+    fontFamily: "var(--font-jetbrains-mono)",
+    fontSize: "13px",
+    letterSpacing: "0.08em",
   },
+  iconTheme: { primary: "#F04428", secondary: "#F4F0E8" },
 };
 
-const empty = () =>
-  toast.error("Please fill the required fields", {
-    id: "error",
-  });
+const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
-const error = () =>
-  toast.error("Error sending your message", {
-    id: "error",
-  });
+const inputClasses =
+  "block w-full border border-ink/30 bg-transparent px-4 py-3 text-base font-mono text-ink placeholder:text-transparent focus:border-vermilion focus:outline-none transition-colors duration-300";
 
-const success = () =>
-  toast.success("Message sent successfully", {
-    id: "success",
-  });
-
+/* Chapter 08 — what happens next. Calm, spacious, functional. */
 const Contact = () => {
   const initialState = { name: "", email: "", message: "" };
   const [formData, setFormData] = useState(initialState);
-  const [mailerResponse, setMailerResponse] = useState("not initiated");
-  const [isSending, setIsSending] = useState(false);
-  const buttonElementRef = useRef(null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [status, setStatus] = useState("idle"); // idle | sending | success | error
   const sectionRef = useRef(null);
+  const reduced = useReducedMotion();
 
-  // ✅ FIXED: Removed setIsSending from handleChange
   const handleChange = ({ target }) => {
     const { id, value } = target;
-    setFormData((prevVal) => {
-      if (
-        value.trim() !== prevVal[id] &&
-        value.trim().length > prevVal[id].trim().length
-      ) {
-        return { ...prevVal, [id]: filter.clean(value.trim()) };
-      } else {
-        return { ...prevVal, [id]: value };
-      }
-    });
-  };
-
-  const emptyForm = () => {
-    setFormData(initialState);
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    setFieldErrors((prev) => ({ ...prev, [id]: undefined }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const { name, email, message } = {
-      name: formData.name,
-      email: formData.email,
-      message: formData.message,
-    };
+    const name = filter.clean(formData.name.trim());
+    const email = formData.email.trim();
+    const message = filter.clean(formData.message.trim());
 
-    if (name === "" || email === "" || message === "") {
-      empty();
-      return setMailerResponse("empty");
+    const errors = {};
+    if (!name) errors.name = "Please tell me your name.";
+    if (!email) errors.email = "An email address is required.";
+    else if (!EMAIL_RE.test(email)) errors.email = "That email doesn't look right.";
+    if (!message) errors.message = "A short message helps me reply well.";
+
+    if (Object.keys(errors).length) {
+      setFieldErrors(errors);
+      toast.error("Please fix the highlighted fields.", { id: "form" });
+      return;
     }
 
-    setIsSending(true);
+    setStatus("sending");
     mail({ name, email, message })
       .then((res) => {
         if (res.status === 200) {
-          setMailerResponse("success");
-          emptyForm();
-          setIsSending(false);
+          setStatus("success");
+          setFormData(initialState);
+          toast.success("Message sent — talk soon.", { id: "form" });
         } else {
-          setMailerResponse("error");
-          setIsSending(false);
+          setStatus("error");
+          toast.error("Something went wrong on the wire. Try again?", { id: "form" });
         }
       })
       .catch((err) => {
-        setMailerResponse("error");
-        setIsSending(false);
         console.error(err);
+        setStatus("error");
+        toast.error("Something went wrong on the wire. Try again?", { id: "form" });
       });
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setMailerResponse("not initiated");
-    }, 10000);
-  }, [mailerResponse]);
+  useLayoutEffect(() => {
+    if (reduced) return undefined;
+    const ctx = gsap.context(() => {
+      gsap.from("[data-contact-reveal]", {
+        y: 32,
+        autoAlpha: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        stagger: 0.1,
+        scrollTrigger: { trigger: sectionRef.current, start: "top 78%", once: true },
+      });
+    }, sectionRef);
 
-  useEffect(() => {
-    if (!buttonElementRef.current) return;
-
-    const handleButtonClick = (e) => {
-      if (!buttonElementRef.current.classList.contains("active")) {
-        buttonElementRef.current.classList.add("active");
-
-        gsap.to(buttonElementRef.current, {
-          keyframes: [
-            {
-              "--left-wing-first-x": 50,
-              "--left-wing-first-y": 100,
-              "--right-wing-second-x": 50,
-              "--right-wing-second-y": 100,
-              duration: 0.2,
-              onComplete() {
-                gsap.set(buttonElementRef.current, {
-                  "--left-wing-first-y": 0,
-                  "--left-wing-second-x": 40,
-                  "--left-wing-second-y": 100,
-                  "--left-wing-third-x": 0,
-                  "--left-wing-third-y": 100,
-                  "--left-body-third-x": 40,
-                  "--right-wing-first-x": 50,
-                  "--right-wing-first-y": 0,
-                  "--right-wing-second-x": 60,
-                  "--right-wing-second-y": 100,
-                  "--right-wing-third-x": 100,
-                  "--right-wing-third-y": 100,
-                  "--right-body-third-x": 60,
-                });
-              },
-            },
-            {
-              "--left-wing-third-x": 20,
-              "--left-wing-third-y": 90,
-              "--left-wing-second-y": 90,
-              "--left-body-third-y": 90,
-              "--right-wing-third-x": 80,
-              "--right-wing-third-y": 90,
-              "--right-body-third-y": 90,
-              "--right-wing-second-y": 90,
-              duration: 0.2,
-            },
-            {
-              "--rotate": 50,
-              "--left-wing-third-y": 95,
-              "--left-wing-third-x": 27,
-              "--right-body-third-x": 45,
-              "--right-wing-second-x": 45,
-              "--right-wing-third-x": 60,
-              "--right-wing-third-y": 83,
-              duration: 0.25,
-            },
-            {
-              "--rotate": 60,
-              "--plane-x": -8,
-              "--plane-y": 40,
-              duration: 0.2,
-            },
-            {
-              "--rotate": 40,
-              "--plane-x": 45,
-              "--plane-y": -300,
-              "--plane-opacity": 0,
-              duration: 0.375,
-              onComplete() {
-                setTimeout(() => {
-                  buttonElementRef.current.removeAttribute("style");
-                  gsap.fromTo(
-                    buttonElementRef.current,
-                    {
-                      opacity: 0,
-                      y: -8,
-                    },
-                    {
-                      opacity: 1,
-                      y: 0,
-                      clearProps: true,
-                      duration: 0.3,
-                      onComplete() {
-                        buttonElementRef.current.classList.remove("active");
-                      },
-                    }
-                  );
-                }, 1800);
-              },
-            },
-          ],
-        });
-
-        gsap.to(buttonElementRef.current, {
-          keyframes: [
-            {
-              "--text-opacity": 0,
-              "--border-radius": 0,
-              "--left-wing-background": "#9f55ff",
-              "--right-wing-background": "#9f55ff",
-              duration: 0.11,
-            },
-            {
-              "--left-wing-background": "#8b31ff",
-              "--right-wing-background": "#8b31ff",
-              duration: 0.14,
-            },
-            {
-              "--left-body-background": "#9f55ff",
-              "--right-body-background": "#9f55ff",
-              duration: 0.25,
-              delay: 0.1,
-            },
-            {
-              "--trails-stroke": 171,
-              duration: 0.22,
-              delay: 0.22,
-            },
-            {
-              "--success-opacity": 1,
-              "--success-x": 0,
-              duration: 0.2,
-              delay: 0.15,
-            },
-            {
-              "--success-stroke": 0,
-              duration: 0.15,
-            },
-          ],
-        });
-      }
-    };
-
-    buttonElementRef.current.addEventListener("click", handleButtonClick);
-
-    return () => {
-      buttonElementRef.current?.removeEventListener("click", handleButtonClick);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const tl = gsap.timeline({ defaults: { ease: "none" } });
-
-    tl.from(
-      sectionRef.current.querySelectorAll(".staggered-reveal"),
-      { opacity: 0, duration: 0.5, stagger: 0.5 },
-      "<"
-    );
-
-    ScrollTrigger.create({
-      trigger: sectionRef.current.querySelector(".contact-wrapper"),
-      start: "100px bottom",
-      end: "center center",
-      scrub: 0,
-      animation: tl,
-    });
-
-    return () => tl.kill();
-  }, []);
+    return () => ctx.revert();
+  }, [reduced]);
 
   return (
     <section
+      id="contact"
       ref={sectionRef}
-      id={MENULINKS[4].ref}
-      className="mt-30 w-full relative select-none bg-black pt-20 sm:pt-10 md:pt-5 lg:pt-1 pb-20"
+      className="relative border-t border-line bg-paper-2 py-24 md:py-36"
     >
-      <div>
-        <Toaster toastOptions={toastOptions} />
-      </div>
-      <div className="section-container flex flex-col justify-center">
-        <div className="flex flex-col contact-wrapper">
-          <div className="flex flex-col">
-            <p className="uppercase tracking-widest text-gray-light-1 staggered-reveal">
-              CONTACT
-            </p>
-            <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
-              Contact
-            </h1>
-          </div>
-          <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-            Get In Touch .{" "}
+      <Toaster toastOptions={toastOptions} position="bottom-right" />
+
+      <div className="section-container grid grid-cols-1 gap-16 lg:grid-cols-12">
+        {/* left — the invitation */}
+        <div className="lg:col-span-5">
+          <p className="mono-label flex items-center gap-4 text-muted" data-contact-reveal>
+            <span className="text-vermilion">08</span>
+            <span aria-hidden="true" className="h-px w-12 bg-ink/25" />
+            <span>Contact</span>
+          </p>
+          <h2 className="display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]" data-contact-reveal>
+            What happens{" "}
+            <em className="serif-accent text-vermilion">next?</em>
           </h2>
+          <p className="mt-8 max-w-md text-lg leading-relaxed text-ink/75" data-contact-reveal>
+            The fastest route is the form — it lands straight in my inbox.
+            Or write to me directly:
+          </p>
+          <a
+            href="mailto:shubhamdalvi775@gmail.com"
+            className="link u-slide mt-4 inline-block font-mono text-base font-bold text-ink md:text-lg"
+            data-contact-reveal
+          >
+            shubhamdalvi775@gmail.com
+          </a>
+          <div className="mt-10 text-ink" data-contact-reveal>
+            <Profiles />
+          </div>
         </div>
 
-        <form className="pt-10 sm:mx-auto sm:w-[30rem] md:w-[35rem] staggered-reveal">
-          <Fade bottom distance={"4rem"}>
-            <div className="relative">
+        {/* right — the form */}
+        <form
+          className="lg:col-span-7"
+          onSubmit={handleSubmit}
+          noValidate
+          data-contact-reveal
+        >
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div>
+              <label htmlFor="name" className="mono-label mb-3 block text-muted">
+                YOUR NAME *
+              </label>
               <input
                 type="text"
                 id="name"
-                className="block w-full h-12 sm:h-14 px-4 text-xl sm:text-2xl font-mono outline-none border-2 border-purple bg-transparent rounded-[0.6rem] transition-all duration-200"
+                name="name"
+                autoComplete="name"
+                className={inputClasses}
                 value={formData.name}
                 onChange={handleChange}
                 required
+                aria-invalid={Boolean(fieldErrors.name)}
               />
-              <label
-                htmlFor="name"
-                className="absolute top-0 left-0 h-full flex items-center pl-4 text-lg font-mono transform transition-all"
-              >
-                Name
-              </label>
+              {fieldErrors.name && (
+                <p className="mt-2 font-mono text-xs text-vermilion">{fieldErrors.name}</p>
+              )}
             </div>
-
-            <div className="relative mt-14">
+            <div>
+              <label htmlFor="email" className="mono-label mb-3 block text-muted">
+                YOUR EMAIL *
+              </label>
               <input
                 type="email"
                 id="email"
-                className="block w-full h-12 sm:h-14 px-4 text-xl sm:text-2xl font-mono outline-none border-2 border-purple bg-transparent rounded-[0.6rem] transition-all duration-200"
+                name="email"
+                autoComplete="email"
+                className={inputClasses}
                 value={formData.email}
                 onChange={handleChange}
                 required
+                aria-invalid={Boolean(fieldErrors.email)}
               />
-              <label
-                htmlFor="email"
-                className="absolute top-0 left-0 h-full flex items-center pl-4 text-lg font-mono transform transition-all"
-              >
-                Email
-              </label>
+              {fieldErrors.email && (
+                <p className="mt-2 font-mono text-xs text-vermilion">{fieldErrors.email}</p>
+              )}
             </div>
+          </div>
 
-            <div className="relative mt-14">
-              <textarea
-                id="message"
-                className="block w-full h-auto min-h-[10rem] max-h-[20rem] sm:h-14 py-2 px-4 text-xl sm:text-2xl font-mono outline-none border-2 border-purple bg-transparent rounded-[0.6rem] transition-all duration-200"
-                value={formData.message}
-                onChange={handleChange}
-                required
-              />
-              <label
-                htmlFor="message"
-                className="absolute top-0 left-0 h-14 flex items-center pl-4 text-lg font-mono transform transition-all"
-              >
-                Message
-              </label>
-            </div>
-          </Fade>
+          <div className="mt-8">
+            <label htmlFor="message" className="mono-label mb-3 block text-muted">
+              MESSAGE *
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={6}
+              className={`${inputClasses} resize-y`}
+              value={formData.message}
+              onChange={handleChange}
+              required
+              aria-invalid={Boolean(fieldErrors.message)}
+            />
+            {fieldErrors.message && (
+              <p className="mt-2 font-mono text-xs text-vermilion">{fieldErrors.message}</p>
+            )}
+          </div>
 
-          {mailerResponse !== "not initiated" &&
-            (mailerResponse === "success" ? (
-              <div className="hidden">{success()}</div>
-            ) : (
-              <div className="hidden">{error()}</div>
-            ))}
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="link group inline-flex items-center gap-3 border border-ink bg-ink px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:border-vermilion hover:bg-vermilion disabled:cursor-wait disabled:opacity-60"
+            >
+              {status === "sending" ? "Sending…" : "Send message"}
+              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </button>
+            <p aria-live="polite" className="mono-label text-muted">
+              {status === "success" && (
+                <span className="text-cobalt">DELIVERED — THANKS, I&apos;LL REPLY SOON.</span>
+              )}
+              {status === "error" && (
+                <span className="text-vermilion">NOT SENT — PLEASE RETRY OR EMAIL ME.</span>
+              )}
+              {status === "sending" && "IN TRANSIT…"}
+            </p>
+          </div>
         </form>
-        <div className="mt-9 mx-auto link">
-          <button
-            ref={buttonElementRef}
-            className={styles.button}
-            disabled={
-              formData.name === "" ||
-              formData.email === "" ||
-              formData.message === "" ||
-              isSending
-                ? true
-                : false
-            }
-            onClick={handleSubmit}
-          >
-            <span>{isSending ? "Sending..." : "Send ->"}</span>
-            <span className={styles.success}>
-              <svg viewBox="0 0 16 16">
-                <polyline points="3.75 9 7 12 13 5"></polyline>
-              </svg>
-              Sent
-            </span>
-            <svg className={styles.trails} viewBox="0 0 33 64">
-              <path d="M26,4 C28,13.3333333 29,22.6666667 29,32 C29,41.3333333 28,50.6666667 26,60"></path>
-              <path d="M6,4 C8,13.3333333 9,22.6666667 9,32 C9,41.3333333 8,50.6666667 6,60"></path>
-            </svg>
-            <div className={styles.plane}>
-              <div className={styles.left} />
-              <div className={styles.right} />
-            </div>
-          </button>
-        </div>
       </div>
-      <style jsx global>{`
-        input,
-        label,
-        textarea {
-          cursor: none;
-        }
-
-        input:hover,
-        textarea:hover {
-          box-shadow: 0 0 0.3rem #7000ff;
-        }
-
-        input:active,
-        input:focus,
-        textarea:active,
-        textarea:focus {
-          box-shadow: 0 0 0.3rem #000000;
-        }
-
-        input:focus + label,
-        input:valid + label {
-          height: 50%;
-          padding-left: 0;
-          transform: translateY(-100%);
-        }
-
-        textarea:focus + label,
-        textarea:valid + label {
-          height: 17%;
-          padding-left: 0;
-          transform: translateY(-100%);
-        }
-      `}</style>
     </section>
   );
 };

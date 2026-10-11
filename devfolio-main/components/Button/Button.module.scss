@@ -1,71 +1,90 @@
-.primary__button {
+$ink: #171717;
+$paper: #f4f0e8;
+$vermilion: #f04428;
+
+.base {
   position: relative;
   display: inline-flex;
   align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-jetbrains-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-decoration: none;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.8rem;
-  font-weight: 800;
+  border: 1px solid $ink;
+  transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
-  padding: 0.65rem 1.75rem;
-  background-clip: padding-box;
-  border-radius: 0.4rem;
-  color: #fff;
-  background-size: 220%;
-   outline: 2px solid #0284c7;
-   background-image: linear-gradient(120deg, transparent 0%, transparent 50%, #0ea5e9 50%);
-  transition: all 0.3s ease-in-out;
+  .arrow {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
 
-  &:hover,
-  &:active {
-    background-position: 100%;
-    color: #fff;
-       box-shadow: 0 0 1rem #0284c7;
+  &:hover .arrow,
+  &:focus-visible .arrow {
+    transform: translateX(4px);
   }
 }
 
-// .primary__button[disabled] {
-//   pointer-events: none;
-//   background-position: 120%;
-//   box-shadow: 0 0 0rem theme("colors.indigo.dark");
-
-//   color: inherit;
-
-//   background-image: linear-gradient(
-//     120deg,
-//     transparent 33%,
-//     theme("colors.purple") 33%,
-//     theme("colors.purple")66%,
-//     transparent 66%
-//   );
-
-//   animation-name: load;
-//   animation-duration: 1s;
-//   animation-iteration-count: infinite;
-// }
-
-.secondary__button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.8rem;
-  font-weight: 800;
-
-  padding: 0.65rem 1.75rem;
-  background-clip: padding-box;
-  border-radius: 0.4rem;
-  color: #fff;
-  background-size: 220%;
-  outline: 2px solid #0284c7;
-   background-image: linear-gradient(120deg, transparent 0%, transparent 50%, #0ea5e9 50%);
-  transition: all 0.3s ease-in-out;
+.primary__button {
+  @extend .base;
+  background: $ink;
+  color: $paper;
 
   &:hover,
-  &:active {
-    background-position: 100%;
-    color: #fff;
-     box-shadow: 0 0 1rem #0284c7;
+  &:focus-visible {
+    background: $vermilion;
+    border-color: $vermilion;
+    color: $paper;
+  }
+}
+
+.secondary__button {
+  @extend .base;
+  background: transparent;
+  color: $ink;
+
+  &:hover,
+  &:focus-visible {
+    background: $ink;
+    color: $paper;
+  }
+}
+
+.primary__disabledButton,
+.secondary__disabledButton {
+  @extend .base;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* inverted flavour for dark chapters */
+.onDark_primary__button {
+  @extend .base;
+  background: $vermilion;
+  border-color: $vermilion;
+  color: $paper;
+
+  &:hover,
+  &:focus-visible {
+    background: $paper;
+    border-color: $paper;
+    color: $ink;
+  }
+}
+
+.onDark_secondary__button {
+  @extend .base;
+  background: transparent;
+  border-color: rgba($paper, 0.5);
+  color: $paper;
+
+  &:hover,
+  &:focus-visible {
+    background: $paper;
+    color: $ink;
   }
 }

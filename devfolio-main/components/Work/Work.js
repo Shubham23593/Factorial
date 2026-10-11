@@ -1,101 +1,128 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Tabs from "./Tabs/Tabs";
-import StickyScroll from "./StickyScroll/StickyScroll";
-import { MENULINKS, WORK_CONTENTS } from "../../constants";
+import ChapterHeading from "../Chapter/ChapterHeading";
+import { WORK_TIMELINE } from "../../constants";
+import { useReducedMotion } from "../../utils/hooks";
 
-const Work = ({ isDesktop }) => {
+gsap.registerPlugin(ScrollTrigger);
+
+/* Chapter 04 — the path of progress.
+   A continuous chronology drawn down a single rail. */
+const Work = () => {
   const sectionRef = useRef(null);
+  const railRef = useRef(null);
+  const reduced = useReducedMotion();
 
-  const tabItems = useMemo(
-    () => [
-      {
-        title: "Sapphire",
-        value: "sapphire",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.SAPPHIRE}
-          />
-        ),
-      },
-      {
-        title: "Ideamagix",
-        value: "ideamagix",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.IDEAMAGIX}
-          />
-        ),
-      },
-      {
-        title: "AECCI",
-        value: "aecci",
-        content: (
-          <StickyScroll
-            isDesktop={isDesktop}
-            contentItems={WORK_CONTENTS.AECCI}
-          />
-        ),
-      },
-    ],
-    [isDesktop]
-  );
-
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (reduced) return undefined;
     const ctx = gsap.context(() => {
-      const tl = gsap
-        .timeline({ defaults: { ease: "none" } })
-        .from(
-          sectionRef.current.querySelectorAll(".staggered-reveal"),
-          { opacity: 0, duration: 0.5, stagger: 0.5 },
-          "<"
+      if (railRef.current) {
+        gsap.fromTo(
+          railRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            transformOrigin: "top center",
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              end: "bottom 60%",
+              scrub: 0.6,
+            },
+          }
         );
+      }
 
-      ScrollTrigger.create({
-        trigger: sectionRef.current.querySelector(".work-wrapper"),
-        start: "100px bottom",
-        end: "center center",
-        scrub: 0,
-        animation: tl,
+      gsap.utils.toArray("[data-work-reveal]").forEach((el) => {
+        gsap.from(el, {
+          y: 40,
+          autoAlpha: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 86%", once: true },
+        });
       });
-    });
+    }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reduced]);
 
   return (
-    <section
-      ref={sectionRef}
-      id={MENULINKS[3].ref}
-      className="w-full relative select-none xs:mt-16 sm:mt-24 mb-16"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/left-pattern.svg"
-        className="absolute hidden left-0 -top-1/4 w-1/12 max-w-xs md:block"
-        loading="lazy"
-        height={700}
-        width={320}
-        alt="left pattern"
-      />
-      <div className="section-container py-16 flex flex-col justify-center">
-        <div className="flex flex-col work-wrapper">
-          <div className="flex flex-col">
-            <p className="uppercase tracking-widest text-gray-light-1 staggered-reveal">
-              WORK
-            </p>
-            <h1 className="text-6xl mt-2 font-medium text-gradient w-fit staggered-reveal">
-              Experience
-            </h1>
-            <h2 className="text-[1.65rem] font-medium md:max-w-lg w-full mt-2 staggered-reveal">
-  Here’s a look at my completed internship and the work I’ve done.
-</h2>
+    <section id="work" className="relative border-t border-line bg-paper-2 py-24 md:py-36">
+      <div className="section-container">
+        <ChapterHeading
+          index="04"
+          kicker="Experience"
+          title="The path of"
+          accent="progress."
+        />
 
+        <div className="relative mt-20">
+          {/* rail */}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-0 left-[7px] top-0 w-px bg-ink/15 md:left-[9px]"
+          >
+            <div ref={railRef} className="h-full w-full bg-vermilion" />
           </div>
-          <Tabs tabItems={tabItems} />
+
+          <ol className="flex flex-col gap-16 md:gap-24">
+            {WORK_TIMELINE.map((job, i) => (
+              <li
+                key={job.company}
+                className="relative grid grid-cols-1 gap-6 pl-10 md:grid-cols-12 md:gap-10 md:pl-14"
+                data-work-reveal
+              >
+                {/* node */}
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 top-2 h-[15px] w-[15px] rotate-45 border border-vermilion bg-paper-2 md:h-[19px] md:w-[19px]"
+                />
+
+                <div className="md:col-span-3">
+                  <p className="mono-label text-vermilion">{job.period}</p>
+                  <p className="mono-label mt-2 text-muted">{job.location}</p>
+                </div>
+
+                <div className="md:col-span-6">
+                  <h3 className="display text-2xl md:text-3xl">
+                    {job.company}
+                  </h3>
+                  <p className="serif-accent mt-2 text-xl text-ink/70">
+                    {job.role}
+                  </p>
+                  {job.full && (
+                    <p className="mono-label mt-3 text-muted">{job.full}</p>
+                  )}
+                  <ul className="mt-5 flex max-w-xl flex-col gap-2">
+                    {job.points.map((p) => (
+                      <li key={p} className="flex gap-3 text-base leading-relaxed text-ink/75">
+                        <span aria-hidden="true" className="mt-[0.6em] h-px w-5 flex-none bg-vermilion" />
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="md:col-span-3 md:justify-self-end">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={job.logo}
+                    alt={`${job.company} logo`}
+                    width={72}
+                    height={72}
+                    loading="lazy"
+                    className="h-16 w-16 border border-ink/20 bg-paper object-contain p-2"
+                  />
+                  <p className="mono-label mt-4 max-w-[12rem] text-muted">
+                    {job.stack.join(" · ")}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

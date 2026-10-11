@@ -1,64 +1,105 @@
-import { useCallback, useEffect, useRef } from "react";
-import Image from "next/image";
-import { Howl } from "howler";
+import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { MENULINKS } from "../../constants";
+import { BuildMark } from "../Signature/Signature";
 import SoundBar from "./SoundBar/SoundBar";
 
-const multiPop = new Howl({
-  src: ["/sounds/multi-pop.mp3"],
-});
+/* Menu carries framer-motion — loaded on first open, not on first paint. */
+const Menu = dynamic(() => import("./Menu/Menu"), { ssr: false });
 
-const Header = ({ children }) => {
-  const inputRef = useRef(null);
-
-  const handleClick = useCallback((e) => {
-    if (e.target.checked) multiPop.play();
-  }, []);
-
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === "Escape" && inputRef.current?.checked) {
-      inputRef.current.checked = false;
-    }
-  }, []);
+/* Fixed editorial masthead: brand · inline index · sound · full menu. */
+const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 32);
+        ticking = false;
+      });
     };
-  }, [handleKeyDown]);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  const inlineLinks = MENULINKS.filter((l) =>
+    ["skills", "projects", "work", "achievements"].includes(l.ref)
+  );
 
   return (
-    <nav className="w-full fixed top-0 py-8 z-50 select-none bg-gradient-to-b from-black shadow-black transition-all duration-300">
-      <div className="flex justify-between section-container">
-        <a href="#home" className="link">
-          <Image
-            src="/sd.png"
-            alt="Logo - Shubham Dalvi"
-            width={40}
-            height={40}
-          />
-        </a>
-        <div className="outer-menu relative flex items-center gap-8 z-[1]">
-          <SoundBar />
-          <input
-            ref={inputRef}
-            aria-labelledby="menu"
-            aria-label="menu"
-            className="checkbox-toggle link absolute top-0 right-0 w-6 h-6 opacity-0"
-            type="checkbox"
-            onClick={handleClick}
-          />
-          <div className="hamburger w-6 h-6 flex items-center justify-center">
-            <div className="relative flex-none w-full bg-white duration-300 flex items-center justify-center" />
+    <>
+      <nav
+        aria-label="Primary"
+        className={`fixed inset-x-0 top-0 z-[60] transition-all duration-500 ${
+          scrolled
+            ? "border-b border-line bg-paper/90 backdrop-blur-md"
+            : "border-b border-transparent bg-transparent"
+        }`}
+      >
+        <div className="section-container flex h-16 items-center justify-between md:h-20">
+          <a
+            href="#home"
+            className="link group flex items-center gap-3 text-ink"
+            aria-label="Shubham Dalvi — back to top"
+          >
+            <BuildMark size={26} className="transition-transform duration-500 group-hover:-translate-y-0.5" />
+            <span className="font-semibold tracking-tight text-base">
+              Shubham&nbsp;Dalvi
+            </span>
+            <span className="mono-label mt-0.5 hidden text-muted sm:inline">
+              / full stack dev
+            </span>
+          </a>
+
+          <div className="flex items-center gap-6">
+            <ul className="hidden items-center gap-7 lg:flex">
+              {inlineLinks.map((l) => (
+                <li key={l.ref}>
+                  <a
+                    href={`#${l.ref}`}
+                    className="link mono-label u-slide text-ink/70 hover:text-ink"
+                  >
+                    <span className="mr-1 text-vermilion">{l.num}</span>
+                    {l.name}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a
+                  href="#contact"
+                  className="link mono-label border border-ink px-4 py-2 transition-colors duration-300 hover:border-vermilion hover:bg-vermilion hover:text-paper"
+                >
+                  Let&apos;s talk
+                </a>
+              </li>
+            </ul>
+
+            <SoundBar />
+
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              className="link group flex h-8 w-8 flex-col items-center justify-center gap-[7px] border border-ink/25 transition-colors hover:border-vermilion"
+            >
+              <span className="h-px w-4 bg-ink transition-all duration-300 group-hover:w-5 group-hover:bg-vermilion" />
+              <span className="h-px w-5 bg-ink transition-all duration-300 group-hover:bg-vermilion" />
+            </button>
           </div>
-          {children}
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <Menu open={menuOpen} onClose={closeMenu} />
+    </>
   );
 };
 
 export default Header;
-
-
